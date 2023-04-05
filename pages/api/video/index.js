@@ -1,40 +1,32 @@
 import ytdl from 'ytdl-core'
 import mime from 'mime'
 export default async function handler(req, res) {
-  const { videoLink, filter } = req.query
-  console.log(filter)
+  const { videoLink, itag } = req.query
   console.log(videoLink)
-  if (!videoLink) {
-    return res.status(400).json({
+  console.log(itag)
+  if (!videoLink || !itag) {
+    res.setHeader('Content-Type', 'application/json')
+    res.status(400).json({
       code: 400,
       message: 'Bad request: the video link is missing.',
     })
+    return
   }
   try {
-    let media
     const videoInfo = await ytdl.getInfo(videoLink)
-    if (filter === 'videoonly') {
-      media = ytdl(videoLink, { quality: 'highestvideo', filter: 'videoonly' })
-    } else if (filter === 'audioonly') {
-      media = ytdl(videoLink, { quality: 'highestaudio', filter: 'audioonly' })
-    } else {
-      media = ytdl(videoLink, { quality: 'highest', filter: 'videoandaudio' })
-    }
-    const format = ytdl.chooseFormat(videoInfo.formats, {
-      filter: filter,
-      quality:
-        filter === 'videoonly'
-          ? 'highestvideo'
-          : filter === 'audioonly'
-          ? 'highestaudio'
-          : 'highest',
-    })
-    const mimeType = mime.getType(format.container)
-    res.setHeader('Content-Type', mimeType)
-    media.pipe(res)
+    const format = videoInfo.formats.find((el) => el.itag == itag)
+    const videoReadStream = ytdl(videoLink, { format: format })
+    const MIME_TYPE = mime.getType(format.mimeType)
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${videoInfo.title}.${format.container}"`
+    )
+    res.setHeader('Content-Type', MIME_TYPE)
+    videoReadStream.pipe(res)
   } catch (error) {
-    return res
+    res.setHeader('Content-Type', 'application/json')
+    res
       .status(500)
-      .json({ code: 500, message: "couldn't get video information", error })
+      .json({ code: 500, message: "couldn't get video stream", error })
   }
 }
