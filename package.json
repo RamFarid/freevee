@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm i python3 && next build",
     "start": "next start",
     "lint": "next lint"
   },
