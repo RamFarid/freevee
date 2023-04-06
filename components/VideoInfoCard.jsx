@@ -85,6 +85,7 @@ function VideoInfoCard({
             disabled={isVideoDownloading}
           >
             {formats.map((video) => {
+              if (video.ext === 'mhtml') return
               return (
                 <MenuItem key={video.format_id} value={video.format_id}>
                   <Stack
@@ -95,9 +96,9 @@ function VideoInfoCard({
                   >
                     {video.ext}
                     {` : ${video.format_note}`}
-                    {video.hasVideo && !video.hasAudio ? (
+                    {video.acodec === 'none' && video.vcodec !== 'none' ? (
                       <VolumeOffIcon size='small' />
-                    ) : video.hasAudio && !video.hasVideo ? (
+                    ) : video.acodec !== 'none' && video.vcodec === 'none' ? (
                       <VolumeUpSharpIcon size='small' />
                     ) : null}
                   </Stack>

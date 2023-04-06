@@ -10,7 +10,6 @@ export default async function handler(req, res) {
     return
   }
   try {
-    console.log(videoLink)
     const videoInfo = await youtubedl(videoLink, {
       dumpSingleJson: true,
       noWarnings: true,
