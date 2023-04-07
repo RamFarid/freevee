@@ -130,6 +130,13 @@ function Content() {
           message: videoDetails.message,
         })
       }
+      if (videoDetails.code === 404) {
+        setErrors({
+          isError: true,
+          title: "Link doesn't correct",
+          message: videoDetails.message,
+        })
+      }
       if (videoDetails.code === 200) {
         let videoAndAudio = []
         let audio = []
