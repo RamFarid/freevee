@@ -60,7 +60,6 @@ function Content() {
   const [itag, setItag] = useState('')
   const [helperText, setHelperText] = useState('')
   const [isVideoDownloading, setisVideoDownloading] = useState(false)
-  const [videoURL, setVideoURL] = useState('')
   const [videoInfo, setVideoInfo] = useState({})
 
   const reqExp = /^https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)/
@@ -74,9 +73,7 @@ function Content() {
       })
       return
     }
-    let chosenFormat = videoInfo.formats.find(
-      (video) => video.format_id === itag
-    )
+    let chosenFormat = videoInfo.formats.find((video) => video.itag === itag)
     window.open(chosenFormat.url, '_blank')
   }
 
@@ -109,7 +106,6 @@ function Content() {
     }
     try {
       setItag('')
-      setVideoURL('')
       setHelperText('')
       setErrors({
         isError: false,
@@ -144,13 +140,13 @@ function Content() {
           message: '',
         })
         video = videoDetails.data.formats.filter(
-          (video) => video.acodec === 'none' && video.vcodec !== 'none'
+          (video) => !video.hasAudio && video.hasVideo
         )
         audio = videoDetails.data.formats.filter(
-          (video) => video.acodec !== 'none' && video.vcodec === 'none'
+          (video) => video.hasAudio && !video.hasVideo
         )
         videoAndAudio = videoDetails.data.formats.filter(
-          (video) => video.acodec !== 'none' && video.vcodec !== 'none'
+          (video) => video.hasAudio && video.hasVideo
         )
         let newVideoDetailes = structuredClone(videoDetails.data)
         newVideoDetailes.formats = videoAndAudio.concat(audio).concat(video)
@@ -160,7 +156,6 @@ function Content() {
       }
 
       setisVideoDownloading(false)
-      console.log(videoDetails)
       setHelperText('')
     } catch (error) {
       setisVideoDownloading(false)
@@ -267,7 +262,6 @@ function Content() {
               {...videoInfo}
               itag={itag}
               handleItag={handleItagInput}
-              videoURL={videoURL}
               isVideoDownloading={isVideoDownloading}
               handleVideoStream={handleVideoStream}
             />

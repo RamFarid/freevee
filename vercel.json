@@ -1,9 +1,0 @@
-{
-  "build": {
-    "env": {
-      "PYTHONUNBUFFERED": "1",
-      "PYTHONIOENCODING": "UTF-8",
-      "PATH": "/usr/local/bin:${env.PATH}"
-    }
-  }
-}

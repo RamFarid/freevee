@@ -24,23 +24,10 @@ function VideoInfoCard({
   handleItag,
   formats,
   handleVideoStream,
-  videoURL,
 }) {
-  const formatObj = formats.find((el) => el.itag === itag)
   return (
     <Card sx={{ maxWidth: 345 }}>
-      {(formatObj?.container === 'webm' || formatObj?.container === 'mp3') &&
-      videoURL.length !== 0 ? (
-        <audio controls>
-          <source src={videoURL} />
-        </audio>
-      ) : formatObj?.container === 'mp4' && videoURL.length !== 0 ? (
-        <video controls width={'100%'}>
-          <source src={videoURL} />
-        </video>
-      ) : (
-        <CardMedia sx={{ height: 140 }} image={thumbnailUrl} title={title} />
-      )}
+      <CardMedia sx={{ height: 140 }} image={thumbnailUrl} title={title} />
       <CardContent>
         <Typography gutterBottom variant='body1' component='h3'>
           {title}
@@ -85,20 +72,19 @@ function VideoInfoCard({
             disabled={isVideoDownloading}
           >
             {formats.map((video) => {
-              if (video.ext === 'mhtml') return
               return (
-                <MenuItem key={video.format_id} value={video.format_id}>
+                <MenuItem key={video.itag} value={video.itag}>
                   <Stack
                     width={'100%'}
                     direction={'row'}
                     justifyContent={'space-between'}
                     alignItems={'center'}
                   >
-                    {video.ext}
-                    {` : ${video.format_note}`}
-                    {video.acodec === 'none' && video.vcodec !== 'none' ? (
+                    {video.container}
+                    {` : ${video.qualityLabel || video.quality}`}
+                    {!video.hasAudio && video.hasVideo ? (
                       <VolumeOffIcon size='small' />
-                    ) : video.acodec !== 'none' && video.vcodec === 'none' ? (
+                    ) : video.hasAudio && !video.hasVideo ? (
                       <VolumeUpSharpIcon size='small' />
                     ) : null}
                   </Stack>
