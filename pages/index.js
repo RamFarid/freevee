@@ -2,8 +2,12 @@ import Head from 'next/head'
 import { Paper, Stack } from '@mui/material'
 import Header from '../components/Header'
 import Content from '../components/Content'
+import { useEffect } from 'react'
 
 export default function Home() {
+  useEffect(() => {
+    console.log('Apply #1')
+  }, [])
   return (
     <>
       <Head>
